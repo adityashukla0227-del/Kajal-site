@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalcPro India — Smart Calculators for Every Need</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0D0D0D;
+    --bg2: #141414;
+    --bg3: #1C1C1C;
+    --bg4: #242424;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #F0EDE8;
+    --text2: #A09A92;
+    --text3: #5C574F;
+    --accent: #E8C547;
+    --accent2: #C9A82A;
+    --accent-bg: rgba(232,197,71,0.08);
+    --accent-bg2: rgba(232,197,71,0.15);
+    --green: #4CAF7D;
+    --green-bg: rgba(76,175,125,0.1);
+    --red: #E05C5C;
+    --red-bg: rgba(224,92,92,0.1);
+    --blue: #5B9BD5;
+    --blue-bg: rgba(91,155,213,0.1);
+    --purple: #9B7FE8;
+    --purple-bg: rgba(155,127,232,0.1);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(13,13,13,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-logo { font-family: var(--font-display); font-size: 22px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { background: var(--accent); color: #0D0D0D; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: background 0.2s; }
+  .nav-cta:hover { background: var(--accent2); }
+
+  /* MODAL */
+  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; width: 100%; max-width: 420px; padding: 2rem; position: relative; }
+  .modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--bg4); border: none; color: var(--text2); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { color: var(--text); }
+  .modal h2 { font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 0.4rem; }
+  .modal p { color: var(--text2); font-size: 14px; margin-bottom: 1.5rem; }
+  .modal-features { list-style: none; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 10px; }
+  .modal-features li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text2); }
+  .modal-features li::before { content: '✓'; color: var(--green); font-weight: 700; font-size: 15px; }
+  .modal-input { width: 100%; background: var(--bg4); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 15px; font-family: var(--font-body); outline: none; margin-bottom: 10px; }
+  .modal-input:focus { border-color: var(--accent); }
+  .modal-submit { width: 100%; padding: 13px; background: var(--accent); border: none; border-radius: 10px; font-size: 15px; font-weight: 600; color: #0D0D0D; cursor: pointer; font-family: var(--font-body); transition: background 0.2s; }
+  .modal-submit:hover { background: var(--accent2); }
+  .modal-note { text-align: center; font-size: 12px; color: var(--text3); margin-top: 10px; }
+
+  /* AFFILIATE CARDS */
+  .affiliate-section { max-width: 960px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+  .affiliate-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+  .affiliate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .aff-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.2s; text-decoration: none; }
+  .aff-card:hover { border-color: var(--accent); }
+  .aff-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 20px; width: fit-content; }
+  .aff-tag.loan { background: var(--blue-bg); color: var(--blue); }
+  .aff-tag.invest { background: var(--green-bg); color: var(--green); }
+  .aff-tag.card { background: var(--purple-bg); color: var(--purple); }
+  .aff-name { font-size: 15px; font-weight: 500; color: var(--text); }
+  .aff-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .aff-cta { font-size: 12px; color: var(--accent); font-weight: 500; margin-top: 4px; }
+
+  /* HERO */
+  .hero { padding: 5rem 2rem 3rem; text-align: center; max-width: 800px; margin: 0 auto; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid rgba(232,197,71,0.2); color: var(--accent); font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.5rem; letter-spacing: 0.05em; text-transform: uppercase; }
+  .hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1.1; color: var(--text); margin-bottom: 1.25rem; }
+  .hero h1 em { color: var(--accent); font-style: italic; }
+  .hero p { font-size: 17px; color: var(--text2); max-width: 500px; margin: 0 auto 2rem; line-height: 1.7; }
+  .hero-stats { display: flex; justify-content: center; gap: 3rem; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--border); }
+  .hero-stat-num { font-family: var(--font-display); font-size: 2rem; color: var(--accent); display: block; }
+  .hero-stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* CALCULATOR TABS */
+  .calc-section { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+  .section-title { font-family: var(--font-display); font-size: 2rem; margin-bottom: 0.5rem; }
+  .section-sub { color: var(--text2); font-size: 15px; margin-bottom: 2rem; }
+
+  .tab-bar { display: flex; gap: 8px; margin-bottom: 2rem; flex-wrap: wrap; }
+  .tab-btn { padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text2); font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+  .tab-btn:hover { border-color: var(--border2); color: var(--text); }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #0D0D0D; font-weight: 600; }
+  .tab-icon { font-size: 15px; }
+
+  .calc-panel { display: none; animation: fadeIn 0.25s ease; }
+  .calc-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .calc-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+  @media(max-width: 640px) { .calc-card { grid-template-columns: 1fr; } .nav-links { display: none; } }
+
+  .calc-inputs { padding: 2rem; border-right: 1px solid var(--border); }
+  .calc-results { padding: 2rem; background: var(--bg3); }
+
+  .calc-inputs h3 { font-size: 16px; font-weight: 500; margin-bottom: 1.5rem; color: var(--text); }
+  .calc-results h3 { font-size: 16px; font-weight: 500; margin-bottom: 1.5rem; color: var(--text); }
+
+  .field { margin-bottom: 1.25rem; }
+  .field label { display: block; font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .field-row { display: flex; align-items: center; background: var(--bg4); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; transition: border-color 0.2s; }
+  .field-row:focus-within { border-color: var(--accent); }
+  .field-row input { flex: 1; background: transparent; border: none; outline: none; padding: 10px 14px; font-size: 16px; color: var(--text); font-family: var(--font-mono); font-weight: 500; }
+  .field-row .unit { padding: 10px 14px; font-size: 12px; color: var(--text3); background: var(--bg3); border-left: 1px solid var(--border); white-space: nowrap; }
+  .field input[type="range"] { width: 100%; accent-color: var(--accent); margin-top: 4px; }
+  .field-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+  .calc-btn-main { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; color: #0D0D0D; cursor: pointer; font-family: var(--font-body); margin-top: 0.5rem; transition: background 0.2s; }
+  .calc-btn-main:hover { background: var(--accent2); }
+
+  .result-card { background: var(--bg4); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 1rem; }
+  .result-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .result-value { font-family: var(--font-display); font-size: 1.9rem; color: var(--text); }
+  .result-value.green { color: var(--green); }
+  .result-value.red { color: var(--red); }
+  .result-value.accent { color: var(--accent); }
+
+  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .key { color: var(--text2); }
+  .result-row .val { font-weight: 500; font-family: var(--font-mono); }
+
+  .pie-wrap { display: flex; justify-content: center; margin: 1rem 0; }
+  .pie-labels { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem; }
+  .pie-label { font-size: 12px; display: flex; align-items: center; gap: 5px; color: var(--text2); }
+  .pie-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .tip-box { background: var(--accent-bg); border: 1px solid rgba(232,197,71,0.15); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-top: 1rem; font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .tip-box strong { color: var(--accent); }
+
+  /* SIMPLE CALCULATOR */
+  .simple-calc-wrap { max-width: 320px; margin: 0 auto; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+  .sc-display { padding: 1.5rem 1.5rem 1rem; background: var(--bg3); text-align: right; }
+  .sc-expr { font-size: 12px; color: var(--text3); font-family: var(--font-mono); min-height: 18px; }
+  .sc-num { font-family: var(--font-mono); font-size: 38px; font-weight: 500; color: var(--text); word-break: break-all; }
+  .sc-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); }
+  .sc-btn { height: 62px; background: var(--bg2); border: none; font-size: 17px; color: var(--text); cursor: pointer; font-family: var(--font-body); transition: background 0.1s; }
+  .sc-btn:hover { background: var(--bg4); }
+  .sc-btn:active { transform: scale(0.94); }
+  .sc-btn.fn { color: var(--text2); font-size: 14px; background: var(--bg3); }
+  .sc-btn.op { color: var(--accent); font-size: 20px; }
+  .sc-btn.eq { background: var(--accent); color: #0D0D0D; font-size: 22px; font-weight: 600; }
+  .sc-btn.eq:hover { background: var(--accent2); }
+  .sc-btn.zero { grid-column: span 2; }
+
+  /* BMI */
+  .bmi-meter { position: relative; height: 12px; border-radius: 6px; background: linear-gradient(to right, #5B9BD5, #4CAF7D, #E8C547, #E05C5C); margin: 1rem 0 0.5rem; overflow: visible; }
+  .bmi-needle { position: absolute; top: -4px; width: 4px; height: 20px; background: var(--text); border-radius: 2px; transform: translateX(-50%); transition: left 0.5s; }
+  .bmi-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); }
+
+  /* FEATURES */
+  .features { padding: 3rem 2rem; max-width: 960px; margin: 0 auto; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .feat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; transition: border-color 0.2s; }
+  .feat-card:hover { border-color: var(--border2); }
+  .feat-icon { font-size: 24px; margin-bottom: 0.75rem; }
+  .feat-title { font-size: 15px; font-weight: 500; margin-bottom: 0.4rem; }
+  .feat-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text3); font-size: 13px; }
+  footer a { color: var(--text2); text-decoration: none; }
+
+  /* AD PLACEHOLDER */
+  .ad-strip { background: var(--bg2); border: 1px dashed var(--border2); border-radius: var(--radius-sm); padding: 1rem; text-align: center; color: var(--text3); font-size: 12px; margin: 1.5rem 0; letter-spacing: 0.04em; }
+  .ad-strip span { color: var(--accent); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Calc<span>Pro</span></div>
+  <div class="nav-links">
+    <a href="#calculators">Calculators</a>
+    <a href="#features">Features</a>
+    <a href="#">Blog</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('signup-modal').classList.add('open')">Free to Use ✦</button>
+</nav>
+
+<div class="modal-bg" id="signup-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('signup-modal').classList.remove('open')">&#x2715;</button>
+    <h2>Free mein join karo</h2>
+    <p>Register karo aur sabhi calculators unlimited use karo — bilkul free.</p>
+    <ul class="modal-features">
+      <li>8+ calculators — EMI, GST, SIP, BMI aur aur bhi</li>
+      <li>Calculation history save hoti hai</li>
+      <li>PDF report download kar sakte ho</li>
+      <li>Premium users ke liye koi ads nahi</li>
+    </ul>
+    <input class="modal-input" type="text" placeholder="Aapka naam" id="modal-name">
+    <input class="modal-input" type="email" placeholder="Email address" id="modal-email">
+    <button class="modal-submit" onclick="handleSignup()">Free Account Banao</button>
+    <p class="modal-note">Koi credit card nahi chahiye. Koi spam nahi.</p>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-badge">&#9733; India's Smart Calculator Suite</div>
+  <h1>Calculate Smarter,<br><em>Live Better</em></h1>
+  <p>EMI, GST, BMI, SIP aur aur bhi — sab kuch ek jagah. Fast, accurate, free.</p>
+  <div class="hero-stats">
+    <div><span class="hero-stat-num">8+</span><span class="hero-stat-label">Calculators</span></div>
+    <div><span class="hero-stat-num">100%</span><span class="hero-stat-label">Free</span></div>
+    <div><span class="hero-stat-num">0</span><span class="hero-stat-label">Sign-up needed</span></div>
+  </div>
+</section>
+
+<div class="ad-strip">Advertisement &nbsp;·&nbsp; <span>Google AdSense banner yahan aayega</span> &nbsp;·&nbsp; 728×90</div>
+
+<section class="calc-section" id="calculators">
+  <div class="section-label">Tools</div>
+  <h2 class="section-title">All Calculators</h2>
+  <p class="section-sub">Apni zaroorat ka calculator chunein</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('emi')"><span class="tab-icon">🏦</span> EMI</button>
+    <button class="tab-btn" onclick="switchTab('gst')"><span class="tab-icon">🧾</span> GST</button>
+    <button class="tab-btn" onclick="switchTab('sip')"><span class="tab-icon">📈</span> SIP</button>
+    <button class="tab-btn" onclick="switchTab('bmi')"><span class="tab-icon">⚖️</span> BMI</button>
+    <button class="tab-btn" onclick="switchTab('age')"><span class="tab-icon">🎂</span> Age</button>
+    <button class="tab-btn" onclick="switchTab('simple')"><span class="tab-icon">🔢</span> Basic</button>
+  </div>
+
+  <!-- EMI -->
+  <div class="calc-panel active" id="panel-emi">
+    <div class="calc-card">
+      <div class="calc-inputs">
+        <h3>Loan Details</h3>
+        <div class="field">
+          <label>Loan Amount</label>
+          <div class="field-row">
+            <input type="number" id="emi-principal" value="500000" oninput="calcEMI()">
+            <span class="unit">₹</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Interest Rate (per year)</label>
+          <div class="field-row">
+            <input type="number" id="emi-rate" value="8.5" step="0.1" oninput="calcEMI()">
+            <span class="unit">%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Loan Tenure</label>
+          <div class="field-row">
+            <input type="number" id="emi-tenure" value="60" oninput="calcEMI()">
+            <span class="unit">Months</span>
+          </div>
+          <div class="field-hint">e.g. 5 saal = 60 mahine</div>
+        </div>
+      </div>
+      <div class="calc-results">
+        <h3>Result</h3>
+        <div class="result-card">
+          <div class="result-label">Monthly EMI</div>
+          <div class="result-value accent" id="emi-result">₹10,245</div>
+        </div>
+        <div class="result-row"><span class="key">Principal Amount</span><span class="val" id="emi-p">₹5,00,000</span></div>
+        <div class="result-row"><span class="key">Total Interest</span><span class="val red" id="emi-i">₹1,14,714</span></div>
+        <div class="result-row"><span class="key">Total Payment</span><span class="val" id="emi-t">₹6,14,714</span></div>
+        <div class="pie-wrap"><canvas id="emi-pie" width="120" height="120"></canvas></div>
+        <div class="pie-labels">
+          <div class="pie-label"><div class="pie-dot" style="background:var(--accent)"></div>Principal</div>
+          <div class="pie-label"><div class="pie-dot" style="background:var(--red)"></div>Interest</div>
+        </div>
+        <div class="tip-box"><strong>Tip:</strong> Interest rate 1% kam karne se aap thousands bachaa sakte ho. Compare karo banks!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GST -->
+  <div class="calc-panel" id="panel-gst">
+    <div class="calc-card">
+      <div class="calc-inputs">
+        <h3>GST Details</h3>
+        <div class="field">
+          <label>Amount</label>
+          <div class="field-row">
+            <input type="number" id="gst-amount" value="10000" oninput="calcGST()">
+            <span class="unit">₹</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>GST Rate</label>
+          <div class="field-row">
+            <input type="number" id="gst-rate" value="18" oninput="calcGST()">
+            <span class="unit">%</span>
+          </div>
+          <div class="field-hint">Common rates: 5%, 12%, 18%, 28%</div>
+        </div>
+        <div class="field">
+          <label>Calculation Type</label>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button id="gst-add-btn" onclick="setGSTType('add')" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--accent);background:var(--accent-bg2);color:var(--accent);cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:500;">Add GST</button>
+            <button id="gst-rem-btn" onclick="setGSTType('remove')" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:var(--font-body);font-size:13px;">Remove GST</button>
+          </div>
+        </div>
+      </div>
+      <div class="calc-results">
+        <h3>Result</h3>
+        <div class="result-card">
+          <div class="result-label">Total Amount</div>
+          <div class="result-value accent" id="gst-total">₹11,800</div>
+        </div>
+        <div class="result-row"><span class="key">Base Amount</span><span class="val" id="gst-base">₹10,000</span></div>
+        <div class="result-row"><span class="key">CGST (9%)</span><span class="val" id="gst-cgst">₹900</span></div>
+        <div class="result-row"><span class="key">SGST (9%)</span><span class="val" id="gst-sgst">₹900</span></div>
+        <div class="result-row"><span class="key">Total GST</span><span class="val red" id="gst-gst">₹1,800</span></div>
+        <div class="tip-box"><strong>Note:</strong> CGST + SGST intra-state ke liye hota hai. Inter-state pe IGST lagta hai (poora rate).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIP -->
+  <div class="calc-panel" id="panel-sip">
+    <div class="calc-card">
+      <div class="calc-inputs">
+        <h3>SIP Investment</h3>
+        <div class="field">
+          <label>Monthly Investment</label>
+          <div class="field-row">
+            <input type="number" id="sip-monthly" value="5000" oninput="calcSIP()">
+            <span class="unit">₹/mo</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Expected Annual Return</label>
+          <div class="field-row">
+            <input type="number" id="sip-rate" value="12" step="0.5" oninput="calcSIP()">
+            <span class="unit">%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Investment Period</label>
+          <div class="field-row">
+            <input type="number" id="sip-years" value="10" oninput="calcSIP()">
+            <span class="unit">Years</span>
+          </div>
+        </div>
+      </div>
+      <div class="calc-results">
+        <h3>Result</h3>
+        <div class="result-card">
+          <div class="result-label">Maturity Value</div>
+          <div class="result-value accent" id="sip-total">₹11,61,695</div>
+        </div>
+        <div class="result-row"><span class="key">Total Invested</span><span class="val" id="sip-invested">₹6,00,000</span></div>
+        <div class="result-row"><span class="key">Wealth Gained</span><span class="val green" id="sip-gain">₹5,61,695</span></div>
+        <div class="result-row"><span class="key">Returns</span><span class="val green" id="sip-pct">93.6%</span></div>
+        <div class="pie-wrap"><canvas id="sip-pie" width="120" height="120"></canvas></div>
+        <div class="pie-labels">
+          <div class="pie-label"><div class="pie-dot" style="background:var(--blue)"></div>Invested</div>
+          <div class="pie-label"><div class="pie-dot" style="background:var(--green)"></div>Gains</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BMI -->
+  <div class="calc-panel" id="panel-bmi">
+    <div class="calc-card">
+      <div class="calc-inputs">
+        <h3>Body Measurements</h3>
+        <div class="field">
+          <label>Height</label>
+          <div class="field-row">
+            <input type="number" id="bmi-height" value="170" oninput="calcBMI()">
+            <span class="unit">cm</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Weight</label>
+          <div class="field-row">
+            <input type="number" id="bmi-weight" value="65" oninput="calcBMI()">
+            <span class="unit">kg</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Age</label>
+          <div class="field-row">
+            <input type="number" id="bmi-age" value="25" oninput="calcBMI()">
+            <span class="unit">years</span>
+          </div>
+        </div>
+      </div>
+      <div class="calc-results">
+        <h3>Result</h3>
+        <div class="result-card">
+          <div class="result-label">BMI Score</div>
+          <div class="result-value accent" id="bmi-result">22.5</div>
+        </div>
+        <div class="result-row"><span class="key">Category</span><span class="val green" id="bmi-cat">Normal Weight</span></div>
+        <div class="result-row"><span class="key">Ideal Weight Range</span><span class="val" id="bmi-ideal">53 – 72 kg</span></div>
+        <div style="margin-top:1rem">
+          <div class="bmi-meter"><div class="bmi-needle" id="bmi-needle" style="left:40%"></div></div>
+          <div class="bmi-labels"><span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span></div>
+        </div>
+        <div class="tip-box" id="bmi-tip"><strong>Healthy range:</strong> 18.5–24.9. Aap normal range mein hain. Keep it up!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGE -->
+  <div class="calc-panel" id="panel-age">
+    <div class="calc-card">
+      <div class="calc-inputs">
+        <h3>Date of Birth</h3>
+        <div class="field">
+          <label>Apni janm tithi daalo</label>
+          <div class="field-row" style="padding:2px;">
+            <input type="date" id="age-dob" value="1995-06-15" oninput="calcAge()" style="padding:10px 14px;font-size:15px;width:100%;">
+          </div>
+        </div>
+        <div class="field">
+          <label>Calculate age on</label>
+          <div class="field-row" style="padding:2px;">
+            <input type="date" id="age-target" oninput="calcAge()" style="padding:10px 14px;font-size:15px;width:100%;">
+          </div>
+          <div class="field-hint">Khali chodo = aaj ki date</div>
+        </div>
+      </div>
+      <div class="calc-results">
+        <h3>Result</h3>
+        <div class="result-card">
+          <div class="result-label">Aapki Umar</div>
+          <div class="result-value accent" id="age-main">30 years</div>
+        </div>
+        <div class="result-row"><span class="key">Years</span><span class="val" id="age-y">30</span></div>
+        <div class="result-row"><span class="key">Months</span><span class="val" id="age-m">11</span></div>
+        <div class="result-row"><span class="key">Days</span><span class="val" id="age-d">14</span></div>
+        <div class="result-row"><span class="key">Total Days</span><span class="val" id="age-total">11,310</span></div>
+        <div class="result-row"><span class="key">Next Birthday</span><span class="val green" id="age-next">14 days mein</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMPLE CALC -->
+  <div class="calc-panel" id="panel-simple">
+    <div style="display:flex;justify-content:center;padding:1rem 0 2rem;">
+      <div class="simple-calc-wrap">
+        <div class="sc-display">
+          <div class="sc-expr" id="sc-expr"></div>
+          <div class="sc-num" id="sc-num">0</div>
+        </div>
+        <div class="sc-grid">
+          <button class="sc-btn fn" onclick="scClear()">AC</button>
+          <button class="sc-btn fn" onclick="scSign()">+/−</button>
+          <button class="sc-btn fn" onclick="scPct()">%</button>
+          <button class="sc-btn op" onclick="scOp('/')">÷</button>
+          <button class="sc-btn" onclick="scIn('7')">7</button>
+          <button class="sc-btn" onclick="scIn('8')">8</button>
+          <button class="sc-btn" onclick="scIn('9')">9</button>
+          <button class="sc-btn op" onclick="scOp('*')">×</button>
+          <button class="sc-btn" onclick="scIn('4')">4</button>
+          <button class="sc-btn" onclick="scIn('5')">5</button>
+          <button class="sc-btn" onclick="scIn('6')">6</button>
+          <button class="sc-btn op" onclick="scOp('-')">−</button>
+          <button class="sc-btn" onclick="scIn('1')">1</button>
+          <button class="sc-btn" onclick="scIn('2')">2</button>
+          <button class="sc-btn" onclick="scIn('3')">3</button>
+          <button class="sc-btn op" onclick="scOp('+')">+</button>
+          <button class="sc-btn zero" onclick="scIn('0')">0</button>
+          <button class="sc-btn" onclick="scDot()">.</button>
+          <button class="sc-btn eq" onclick="scCalc()">=</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div style="max-width:960px;margin:0 auto;padding:0 1.5rem;">
+  <div class="ad-strip">Advertisement &nbsp;·&nbsp; <span>Google AdSense rectangle banner — 300×250</span></div>
+</div>
+
+<section class="affiliate-section">
+  <div class="affiliate-title">&#9733; Hamari Partner Services — Yahan se apply karoge toh humein commission milta hai</div>
+  <div class="affiliate-grid">
+    <a class="aff-card" href="https://www.paisabazaar.com/personal-loan/" target="_blank">
+      <span class="aff-tag loan">Home Loan</span>
+      <div class="aff-name">PaisaBazaar</div>
+      <div class="aff-desc">8.5% se shuru — compare karo 30+ banks ke home loan offers</div>
+      <div class="aff-cta">Apply karo &rarr;</div>
+    </a>
+    <a class="aff-card" href="https://www.bankbazaar.com/personal-loan.html" target="_blank">
+      <span class="aff-tag loan">Personal Loan</span>
+      <div class="aff-name">BankBazaar</div>
+      <div class="aff-desc">Instant approval, 10.5% se shuru — salary pe based loan</div>
+      <div class="aff-cta">Check karo &rarr;</div>
+    </a>
+    <a class="aff-card" href="https://zerodha.com" target="_blank">
+      <span class="aff-tag invest">SIP / Invest</span>
+      <div class="aff-name">Zerodha</div>
+      <div class="aff-desc">India ka #1 broker — zero commission pe mutual funds</div>
+      <div class="aff-cta">Invest karo &rarr;</div>
+    </a>
+    <a class="aff-card" href="https://www.hdfcbank.com/personal/pay/cards/credit-cards" target="_blank">
+      <span class="aff-tag card">Credit Card</span>
+      <div class="aff-name">HDFC Bank</div>
+      <div class="aff-desc">Best cashback cards — fuel, shopping, travel rewards</div>
+      <div class="aff-cta">Dekhte hain &rarr;</div>
+    </a>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="section-label">Why CalcPro</div>
+  <h2 class="section-title" style="font-family:var(--font-display);font-size:2rem;margin-bottom:2rem;">Built for India</h2>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Instant Results</div>
+      <div class="feat-desc">Type karte hi answer milta hai. No button press needed.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📱</div>
+      <div class="feat-title">Mobile Friendly</div>
+      <div class="feat-desc">Phone pe bhi perfectly kaam karta hai, kisi bhi screen size pe.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">No Data Stored</div>
+      <div class="feat-desc">Aapki koi bhi information save nahi hoti. 100% private.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🆓</div>
+      <div class="feat-title">Always Free</div>
+      <div class="feat-desc">Koi login nahi, koi subscription nahi. Seedha use karo.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 CalcPro India &nbsp;·&nbsp; <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Contact</a></p>
+  <p style="margin-top:6px;">Lucknow, India &nbsp;·&nbsp; Made with ♥</p>
+</footer>
+
+<script>
+// --- TAB SWITCHING ---
+function switchTab(id) {
+  document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (id === 'emi') { calcEMI(); }
+  if (id === 'sip') { calcSIP(); }
+  if (id === 'bmi') { calcBMI(); }
+  if (id === 'age') { calcAge(); }
+  if (id === 'gst') { calcGST(); }
+}
+
+function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+// --- EMI ---
+function drawPie(canvasId, v1, v2, c1, c2) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const total = v1 + v2;
+  const start = -Math.PI / 2;
+  const mid = start + (v1 / total) * 2 * Math.PI;
+  ctx.clearRect(0, 0, 120, 120);
+  ctx.beginPath(); ctx.moveTo(60,60); ctx.arc(60,60,54,start,mid); ctx.closePath();
+  ctx.fillStyle = c1; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(60,60); ctx.arc(60,60,54,mid,start+2*Math.PI); ctx.closePath();
+  ctx.fillStyle = c2; ctx.fill();
+  ctx.beginPath(); ctx.arc(60,60,30,0,2*Math.PI); ctx.fillStyle = '#141414'; ctx.fill();
+}
+
+function calcEMI() {
+  const P = parseFloat(document.getElementById('emi-principal').value) || 0;
+  const r = (parseFloat(document.getElementById('emi-rate').value) || 0) / 1200;
+  const n = parseInt(document.getElementById('emi-tenure').value) || 1;
+  const emi = r === 0 ? P / n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  const total = emi * n;
+  const interest = total - P;
+  document.getElementById('emi-result').textContent = fmt(emi);
+  document.getElementById('emi-p').textContent = fmt(P);
+  document.getElementById('emi-i').textContent = fmt(interest);
+  document.getElementById('emi-t').textContent = fmt(total);
+  drawPie('emi-pie', P, interest, '#E8C547', '#E05C5C');
+}
+
+// --- GST ---
+let gstType = 'add';
+function setGSTType(t) {
+  gstType = t;
+  document.getElementById('gst-add-btn').style.background = t==='add' ? 'var(--accent-bg2)' : 'transparent';
+  document.getElementById('gst-add-btn').style.borderColor = t==='add' ? 'var(--accent)' : 'var(--border)';
+  document.getElementById('gst-add-btn').style.color = t==='add' ? 'var(--accent)' : 'var(--text2)';
+  document.getElementById('gst-rem-btn').style.background = t==='remove' ? 'var(--accent-bg2)' : 'transparent';
+  document.getElementById('gst-rem-btn').style.borderColor = t==='remove' ? 'var(--accent)' : 'var(--border)';
+  document.getElementById('gst-rem-btn').style.color = t==='remove' ? 'var(--accent)' : 'var(--text2)';
+  calcGST();
+}
+function calcGST() {
+  const amt = parseFloat(document.getElementById('gst-amount').value) || 0;
+  const rate = parseFloat(document.getElementById('gst-rate').value) || 0;
+  let base, gst, total;
+  if (gstType === 'add') { base = amt; gst = amt * rate / 100; total = amt + gst; }
+  else { total = amt; base = amt * 100 / (100 + rate); gst = amt - base; }
+  const half = gst / 2;
+  document.getElementById('gst-total').textContent = fmt(total);
+  document.getElementById('gst-base').textContent = fmt(base);
+  document.getElementById('gst-cgst').textContent = fmt(half) + ' (' + (rate/2) + '%)';
+  document.getElementById('gst-sgst').textContent = fmt(half) + ' (' + (rate/2) + '%)';
+  document.getElementById('gst-gst').textContent = fmt(gst);
+}
+
+// --- SIP ---
+function calcSIP() {
+  const P = parseFloat(document.getElementById('sip-monthly').value) || 0;
+  const r = (parseFloat(document.getElementById('sip-rate').value) || 0) / 1200;
+  const n = (parseInt(document.getElementById('sip-years').value) || 0) * 12;
+  const maturity = r === 0 ? P * n : P * (Math.pow(1+r,n)-1) / r * (1+r);
+  const invested = P * n;
+  const gain = maturity - invested;
+  document.getElementById('sip-total').textContent = fmt(maturity);
+  document.getElementById('sip-invested').textContent = fmt(invested);
+  document.getElementById('sip-gain').textContent = fmt(gain);
+  document.getElementById('sip-pct').textContent = invested > 0 ? (gain/invested*100).toFixed(1) + '%' : '0%';
+  drawPie('sip-pie', invested, gain, '#5B9BD5', '#4CAF7D');
+}
+
+// --- BMI ---
+function calcBMI() {
+  const h = parseFloat(document.getElementById('bmi-height').value) / 100 || 1;
+  const w = parseFloat(document.getElementById('bmi-weight').value) || 0;
+  const bmi = w / (h * h);
+  const ideal_low = (18.5 * h * h).toFixed(0);
+  const ideal_high = (24.9 * h * h).toFixed(0);
+  document.getElementById('bmi-result').textContent = bmi.toFixed(1);
+  document.getElementById('bmi-ideal').textContent = ideal_low + ' – ' + ideal_high + ' kg';
+  let cat, tipText, pct;
+  if (bmi < 18.5) { cat = 'Underweight'; tipText = 'Thoda aur khao aur weight gain karo.'; pct = 10; }
+  else if (bmi < 25) { cat = 'Normal Weight'; tipText = 'Healthy range mein hain. Keep it up!'; pct = 38; }
+  else if (bmi < 30) { cat = 'Overweight'; tipText = 'Exercise aur diet pe dhyan do.'; pct = 65; }
+  else { cat = 'Obese'; tipText = 'Doctor se milna zaroori hai.'; pct = 88; }
+  document.getElementById('bmi-cat').textContent = cat;
+  document.getElementById('bmi-needle').style.left = pct + '%';
+  document.getElementById('bmi-tip').innerHTML = '<strong>Suggestion:</strong> ' + tipText;
+}
+
+// --- AGE ---
+function calcAge() {
+  const dob = new Date(document.getElementById('age-dob').value);
+  const targetVal = document.getElementById('age-target').value;
+  const target = targetVal ? new Date(targetVal) : new Date();
+  if (isNaN(dob)) return;
+  let years = target.getFullYear() - dob.getFullYear();
+  let months = target.getMonth() - dob.getMonth();
+  let days = target.getDate() - dob.getDate();
+  if (days < 0) { months--; days += new Date(target.getFullYear(), target.getMonth(), 0).getDate(); }
+  if (months < 0) { years--; months += 12; }
+  const totalDays = Math.floor((target - dob) / 86400000);
+  const nextBday = new Date(target.getFullYear(), dob.getMonth(), dob.getDate());
+  if (nextBday < target) nextBday.setFullYear(nextBday.getFullYear() + 1);
+  const daysToB = Math.ceil((nextBday - target) / 86400000);
+  document.getElementById('age-main').textContent = years + ' years ' + months + ' months';
+  document.getElementById('age-y').textContent = years;
+  document.getElementById('age-m').textContent = months;
+  document.getElementById('age-d').textContent = days;
+  document.getElementById('age-total').textContent = totalDays.toLocaleString('en-IN');
+  document.getElementById('age-next').textContent = daysToB === 0 ? 'Aaj Birthday hai! 🎉' : daysToB + ' din mein';
+}
+
+// --- SIMPLE CALCULATOR ---
+let scCur = '0', scPrev = null, scOper = null, scFresh = false;
+const scD = document.getElementById('sc-num');
+const scE = document.getElementById('sc-expr');
+function scUpdate() { scD.textContent = scCur.length > 12 ? parseFloat(parseFloat(scCur).toPrecision(10)).toString() : scCur; }
+function scIn(d) { if (scFresh) { scCur = d; scFresh = false; } else scCur = scCur === '0' ? d : scCur + d; scUpdate(); }
+function scDot() { if (scFresh) { scCur = '0.'; scFresh = false; } else if (!scCur.includes('.')) scCur += '.'; scUpdate(); }
+function scClear() { scCur='0'; scPrev=null; scOper=null; scFresh=false; scE.textContent=''; scUpdate(); }
+function scSign() { scCur = String(-parseFloat(scCur)); scUpdate(); }
+function scPct() { scCur = String(parseFloat(scCur)/100); scUpdate(); }
+function scOpSym(o) { return o==='*'?'×':o==='/'?'÷':o; }
+function scOp(o) {
+  if (scOper && !scFresh) scCalc(true);
+  scPrev = parseFloat(scCur); scOper = o; scFresh = true;
+  scE.textContent = scPrev + ' ' + scOpSym(o);
+}
+function scCalc(chain) {
+  if (!scOper||scPrev===null) return;
+  const b = parseFloat(scCur);
+  let res;
+  if (scOper==='+') res=scPrev+b;
+  else if (scOper==='-') res=scPrev-b;
+  else if (scOper==='*') res=scPrev*b;
+  else if (scOper==='/') res=b===0?'Error':scPrev/b;
+  if (!chain) { scE.textContent=scPrev+' '+scOpSym(scOper)+' '+b+' ='; scOper=null; scPrev=null; }
+  scCur = res==='Error'?'Error':String(parseFloat(res.toFixed?res.toFixed(10):res));
+  scUpdate(); scFresh=true;
+}
+
+// INIT
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('age-target').value = today;
+calcEMI(); calcAge(); calcGST(); calcSIP(); calcBMI();
+
+function handleSignup() {
+  const name = document.getElementById('modal-name').value.trim();
+  const email = document.getElementById('modal-email').value.trim();
+  if (!name) { document.getElementById('modal-name').focus(); return; }
+  if (!email || !email.includes('@')) { document.getElementById('modal-email').focus(); return; }
+  const modal = document.getElementById('signup-modal');
+  modal.querySelector('.modal').innerHTML = '<div style="text-align:center;padding:2rem 1rem"><div style="font-size:3rem;margin-bottom:1rem">&#10003;</div><h2 style="font-family:var(--font-display);margin-bottom:0.5rem">Welcome, ' + name + '!</h2><p style="color:var(--text2);margin-bottom:1.5rem">Aapka account ban gaya. Abhi sab calculators free hain.</p><button onclick="document.getElementById(\'signup-modal\').classList.remove(\'open\')" style="padding:12px 28px;background:var(--accent);border:none;border-radius:10px;font-size:15px;font-weight:600;color:#0D0D0D;cursor:pointer;font-family:var(--font-body)">Calculator use karo</button></div>';
+}
+</script>
+</body>
+</html>
